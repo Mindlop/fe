@@ -1,7 +1,6 @@
-import { createSignal, Show } from "solid-js";
-import IconVisibility from "../icon/Visibility";
-import IconVisibilityOff from "../icon/VisibilityOff";
+import CalendarMonth from "../icon/CalendarMonth";
 import InputText from "./InputText";
+import style from "./InputDate.module.css";
 
 interface Props {
   labelText?: string;
@@ -18,29 +17,29 @@ interface Props {
   error?: string;
 }
 
-export default function InputPassword(props: Props) {
-  const [isPasswordShown, setIsPasswordShown] = createSignal(false);
+export default function InputDate(props: Props) {
+  let inputRef: HTMLInputElement | undefined = undefined;
 
   return (
     <InputText
+      ref={inputRef}
       labelText={props.labelText}
       labelClass={props.labelClass}
       inputName={props.inputName}
-      inputType={isPasswordShown() ? "text" : "password"}
+      inputType="date"
       inputValue={props.inputValue}
       inputOnInput={props.inputOnInput}
       inputRequired={props.inputRequired}
       inputSuffix={
         <button
           type="button"
-          onclick={() => setIsPasswordShown((prev) => !prev)}
+          onclick={() => inputRef?.showPicker()}
           class="flex"
         >
-          <Show when={isPasswordShown()} fallback={<IconVisibilityOff />}>
-            <IconVisibility />
-          </Show>
+          <CalendarMonth />
         </button>
       }
+      inputClass={style.input}
       error={props.error}
     />
   );

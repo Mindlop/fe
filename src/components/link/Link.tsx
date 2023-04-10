@@ -15,9 +15,7 @@ interface Props
 export default function Link(props: Props) {
   const mergedProps = createMemo(() => ({
     ...props,
-    class: `text-sky-600 hover:underline${
-      props.class ? ` ${props.class}` : ""
-    }`,
+    class: "text-sky-600 hover:underline",
   }));
 
   return <A {...mergedProps()} />;

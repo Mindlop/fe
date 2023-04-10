@@ -1,6 +1,7 @@
-import { createMemo, JSXElement, Show } from "solid-js";
+import { JSXElement, Show } from "solid-js";
 
 interface Props {
+  ref?: HTMLInputElement | ((el: HTMLInputElement) => void);
   labelText?: string;
   labelClass?: string;
   inputName?: string;
@@ -14,18 +15,17 @@ interface Props {
   ) => void;
   inputRequired?: boolean;
   inputSuffix?: JSXElement;
+  inputClass?: string;
   error?: string;
 }
 
 export default function InputText(props: Props) {
-  const labelClass = createMemo(
-    () => `block mb-1${props.labelClass ? ` ${props.labelClass}` : ""}`
-  );
-
   return (
     <div>
       <Show when={props.labelText}>
-        <label class={labelClass()}>
+        <label
+          class={`block mb-1${props.labelClass ? ` ${props.labelClass}` : ""}`}
+        >
           <span classList={{ "text-red-500": !!props.error }}>
             {props.labelText}
           </span>
@@ -42,13 +42,16 @@ export default function InputText(props: Props) {
         }}
       >
         <input
+          ref={props.ref}
           name={props.inputName}
           type={props.inputType}
           value={props.inputValue}
           oninput={props.inputOnInput}
           autocomplete="off"
           autocorrect="off"
-          class="w-full appearance-none outline-none"
+          class={`w-full appearance-none outline-none${
+            props.inputClass ? ` ${props.inputClass}` : ""
+          }`}
         />
         <Show when={props.inputSuffix}>
           <div class="pl-2">{props.inputSuffix}</div>

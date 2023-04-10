@@ -73,7 +73,7 @@ export default function SignInScreen() {
                 labelText="EMAIL"
                 labelClass="text-sm"
                 inputName="email"
-                inputType="text"
+                inputType="email"
                 inputValue={emailVal()}
                 inputOnInput={(e) => changeEmail(e.currentTarget.value)}
                 inputRequired
