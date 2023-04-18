@@ -1,28 +1,34 @@
 import { useLocation, useNavigate } from "@solidjs/router";
 import { createRenderEffect, createSignal } from "solid-js";
 import ConfirmButton from "../../../components/button/ConfirmButton";
+import Form from "../../../components/form/Form";
 import InputPassword from "../../../components/form/InputPassword";
 import Head from "../../../components/head/Head";
 import SiteInfo from "../../../data/siteInfo";
 import SitePath from "../../../data/sitePath";
+import useAuth from "../../../hooks/useAuth";
+import showGqlError from "../../../utils/showGqlError";
 
 export default function NewPasswordScreen() {
-  const location = useLocation<{ email?: string }>();
+  const location = useLocation<{ email?: string; code?: string }>();
   const navigate = useNavigate();
+  const { resetPassword: useResetPassword } = useAuth();
   const [newPasswordVal, setNewPasswordVal] = createSignal("");
   const [confirmPasswordVal, setConfirmPasswordVal] = createSignal("");
   const [newPasswordFieldError, setNewPasswordFieldError] =
     createSignal<string>();
   const [confirmPasswordFieldError, setConfirmPasswordFieldError] =
     createSignal<string>();
+  const [isLoadingResetPassword, setIsLoadingResetPassword] =
+    createSignal(false);
 
   createRenderEffect(() => {
-    if (!location.state?.email) {
+    if (!location.state?.email || !location.state.code) {
       navigate(SitePath.signinHref, { replace: true });
     }
   });
 
-  function changePassword(
+  async function changePassword(
     e: Event & {
       submitter: HTMLElement;
     } & {
@@ -32,16 +38,36 @@ export default function NewPasswordScreen() {
   ) {
     e.preventDefault();
 
+    if (isLoadingResetPassword()) return;
+
     const [newPassword, confirmPassword] = [
       newPasswordVal(),
       confirmPasswordVal(),
     ];
+
+    // Validate form
     const formValidity = testFormValidity(newPassword, confirmPassword);
     if (formValidity.newPassword)
       setNewPasswordFieldError(formValidity.newPassword);
     if (formValidity.confirmPassword)
       setConfirmPasswordFieldError(formValidity.confirmPassword);
     for (const f of Object.values(formValidity)) if (f) return;
+
+    try {
+      setIsLoadingResetPassword(true);
+
+      await useResetPassword(
+        location.state?.email!,
+        location.state?.code!,
+        newPassword
+      );
+
+      navigate(SitePath.signinHref, { replace: true });
+    } catch (e) {
+      showGqlError(e);
+    } finally {
+      setIsLoadingResetPassword(false);
+    }
 
     navigate(SitePath.resetPasswordSuccessHref, { replace: true });
   }
@@ -65,13 +91,13 @@ export default function NewPasswordScreen() {
           <span class="block text-center">Choose a new password</span>
         </div>
         <div class="w-fit mx-auto mt-2">
-          <span class="block text-center">
+          <span class="block text-center opacity-80">
             You'll be signed out of all active {SiteInfo.title} sessions after
             your password is changed
           </span>
         </div>
 
-        <form class="mt-8" onsubmit={changePassword}>
+        <Form class="mt-8" onsubmit={changePassword}>
           <div class="space-y-3">
             <div>
               <InputPassword
@@ -99,9 +125,11 @@ export default function NewPasswordScreen() {
             </div>
           </div>
           <div class="mt-4">
-            <ConfirmButton type="submit">Change password</ConfirmButton>
+            <ConfirmButton type="submit" isLoading={isLoadingResetPassword()}>
+              Change password
+            </ConfirmButton>
           </div>
-        </form>
+        </Form>
       </div>
     </>
   );

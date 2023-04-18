@@ -26,11 +26,15 @@ export default function InputText(props: Props) {
         <label
           class={`block mb-1${props.labelClass ? ` ${props.labelClass}` : ""}`}
         >
-          <span classList={{ "text-red-500": !!props.error }}>
+          <span class="font-bold" classList={{ "text-red-500": !!props.error }}>
             {props.labelText}
           </span>
           <Show when={props.inputRequired}>
-            <span class="text-red-500"> *</span>
+            <span class="font-bold text-red-500"> *</span>
+          </Show>
+          <Show when={props.error}>
+            <span class="text-red-500">&nbsp;&nbsp;-&nbsp;&nbsp;</span>
+            <span class="text-red-500 text-sm italic">{props.error}</span>
           </Show>
         </label>
       </Show>
@@ -49,7 +53,7 @@ export default function InputText(props: Props) {
           oninput={props.inputOnInput}
           autocomplete="off"
           autocorrect="off"
-          class={`w-full appearance-none outline-none${
+          class={`w-full appearance-none outline-none bg-transparent${
             props.inputClass ? ` ${props.inputClass}` : ""
           }`}
         />
@@ -57,11 +61,6 @@ export default function InputText(props: Props) {
           <div class="pl-2">{props.inputSuffix}</div>
         </Show>
       </div>
-      <Show when={props.error}>
-        <div>
-          <span class="text-red-500 text-sm italic">{props.error}</span>
-        </div>
-      </Show>
     </div>
   );
 }

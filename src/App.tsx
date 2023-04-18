@@ -1,5 +1,5 @@
 import { RouteDefinition, useRoutes } from "@solidjs/router";
-import { Component, createRenderEffect, lazy, onCleanup } from "solid-js";
+import { Component, lazy } from "solid-js";
 import { Toaster } from "solid-toast";
 import SitePath from "./data/sitePath";
 
@@ -102,28 +102,11 @@ const routes: RouteDefinition[] = [
 const App: Component = () => {
   const Routes = useRoutes(routes);
 
-  createRenderEffect(() => {
-    const callback = (e: KeyboardEvent) => {
-      if (e.ctrlKey && e.key === "f") {
-        e.preventDefault();
-      }
-    };
-    window.addEventListener("keydown", callback);
-    onCleanup(() => window.removeEventListener("keydown", callback));
-  });
-
-  createRenderEffect(() => {
-    const callback = (e: MouseEvent) => {
-      e.preventDefault();
-    };
-    document.oncontextmenu = callback;
-  });
-
   return (
-    <div class="select-none">
+    <>
       <Routes />
       <Toaster />
-    </div>
+    </>
   );
 };
 

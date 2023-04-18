@@ -1,13 +1,14 @@
 import Head from "../../../components/head/Head";
-import Link from "../../../components/link/Link";
-import SitePath from "../../../data/sitePath";
+import useAuth from "../../../hooks/useAuth";
 
 export default function AppHomeScreen() {
+  const { signOut } = useAuth();
+
   return (
     <>
       <Head title="Home" />
       <div>AppHomeScreen</div>
-      <Link href={SitePath.circlesFull}>{SitePath.circlesFull}</Link>
+      <button onclick={signOut}>SignOut</button>
     </>
   );
 }

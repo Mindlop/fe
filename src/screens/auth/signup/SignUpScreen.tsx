@@ -1,15 +1,19 @@
 import { useNavigate } from "@solidjs/router";
 import { createSignal } from "solid-js";
 import ConfirmButton from "../../../components/button/ConfirmButton";
+import Form from "../../../components/form/Form";
 import InputDate from "../../../components/form/InputDate";
 import InputPassword from "../../../components/form/InputPassword";
 import InputText from "../../../components/form/InputText";
 import Head from "../../../components/head/Head";
 import Link from "../../../components/link/Link";
 import SitePath from "../../../data/sitePath";
+import useAuth from "../../../hooks/useAuth";
+import showGqlError from "../../../utils/showGqlError";
 
 export default function SignUpScreen() {
   const navigate = useNavigate();
+  const { signUp: useSignUp } = useAuth();
   const [nameVal, setNameVal] = createSignal("");
   const [emailVal, setEmailVal] = createSignal("");
   const [usernameVal, setUsernameVal] = createSignal("");
@@ -21,8 +25,9 @@ export default function SignUpScreen() {
   const [passwordFieldError, setPasswordFieldError] = createSignal<string>();
   const [dateOfBirthFieldError, setDateOfBirthFieldError] =
     createSignal<string>();
+  const [isLoadingSignUp, setIsLoadingSignUp] = createSignal(false);
 
-  function signup(
+  async function signUp(
     e: Event & {
       submitter: HTMLElement;
     } & {
@@ -32,6 +37,8 @@ export default function SignUpScreen() {
   ) {
     e.preventDefault();
 
+    if (isLoadingSignUp()) return;
+
     const [name, email, username, password, dateOfBirth] = [
       nameVal(),
       emailVal().trim().toLowerCase(),
@@ -39,6 +46,8 @@ export default function SignUpScreen() {
       passwordVal(),
       dateOfBirthVal(),
     ];
+
+    // Validate form
     const formValidity = testFormValidity(
       name,
       email,
@@ -54,7 +63,17 @@ export default function SignUpScreen() {
       setDateOfBirthFieldError(formValidity.dateOfBirth);
     for (const f of Object.values(formValidity)) if (f) return;
 
-    navigate(SitePath.verifySignupHref, { state: { name, email } });
+    try {
+      setIsLoadingSignUp(true);
+
+      await useSignUp(name, email, username, password, dateOfBirth);
+
+      navigate(SitePath.verifySignupHref, { state: { name, email } });
+    } catch (e) {
+      showGqlError(e);
+    } finally {
+      setIsLoadingSignUp(false);
+    }
   }
 
   function changeName(name: string) {
@@ -91,7 +110,7 @@ export default function SignUpScreen() {
           <span class="block text-center">Create an account</span>
         </div>
 
-        <form class="mt-8" onsubmit={signup} novalidate>
+        <Form class="mt-8" onsubmit={signUp}>
           <div class="space-y-3">
             <div>
               <InputText
@@ -153,13 +172,15 @@ export default function SignUpScreen() {
             </div>
           </div>
           <div class="mt-4">
-            <ConfirmButton type="submit">Sign up</ConfirmButton>
+            <ConfirmButton type="submit" isLoading={isLoadingSignUp()}>
+              Sign up
+            </ConfirmButton>
           </div>
           <div class="mt-2 text-sm">
             <span>Already have an account? </span>
             <Link href={SitePath.signinHref}>Sign in</Link>
           </div>
-        </form>
+        </Form>
       </div>
     </>
   );
@@ -191,7 +212,7 @@ function testFormValidity(
   })();
   const emailValidity = (() => {
     if (email) {
-      const regExp = /\S+@\S+\.\S+/;
+      const regExp = /^[\w-\.]+@([\w-]+\.)+[\w-]*/;
       if (!regExp.test(email)) {
         return "Email is not valid";
       }

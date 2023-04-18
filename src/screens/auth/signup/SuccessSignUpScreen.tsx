@@ -31,7 +31,7 @@ export default function SuccessSignUpScreen() {
           <span class="block text-center">Verification Success</span>
         </div>
         <div class="w-fit mx-auto mt-2">
-          <span class="block text-center">
+          <span class="block text-center opacity-80">
             Welcome to Mindlop, {location.state?.name}. You will be redirected
             to the sign-in page shortly.
           </span>

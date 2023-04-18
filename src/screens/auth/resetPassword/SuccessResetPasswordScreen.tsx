@@ -25,7 +25,7 @@ export default function SuccessResetPasswordScreen() {
           <span class="block text-center">Password changed</span>
         </div>
         <div class="w-fit mx-auto mt-2">
-          <span class="block text-center">
+          <span class="block text-center opacity-80">
             You have been signed out of all active {SiteInfo.title} sessions.
             You will be redirected to the sign-in page shortly.
           </span>

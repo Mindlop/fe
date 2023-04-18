@@ -1,31 +1,54 @@
 import { useNavigate } from "@solidjs/router";
-import { createSignal } from "solid-js";
+import { createSignal, Show } from "solid-js";
 import ConfirmButton from "../../../components/button/ConfirmButton";
+import Form from "../../../components/form/Form";
 import InputPassword from "../../../components/form/InputPassword";
 import InputText from "../../../components/form/InputText";
 import Head from "../../../components/head/Head";
 import Link from "../../../components/link/Link";
+import LoadingSpinner from "../../../components/loading/LoadingSpinner";
 import SitePath from "../../../data/sitePath";
+import useAuth from "../../../hooks/useAuth";
+import showGqlError from "../../../utils/showGqlError";
 
 export default function SignInScreen() {
   const navigate = useNavigate();
+  const { signIn: useSignIn, requestResetPassword: useRequestResetPassword } =
+    useAuth();
   const [emailVal, setEmailVal] = createSignal("");
   const [passwordVal, setPasswordVal] = createSignal("");
   const [emailFieldError, setEmailFieldError] = createSignal<string>();
   const [passwordFieldError, setPasswordFieldError] = createSignal<string>();
+  const [isLoadingSignIn, setIsLoadingSignIn] = createSignal(false);
+  const [isLoadingResetPassword, setIsLoadingResetPassword] =
+    createSignal(false);
 
-  function resetPassword() {
+  async function resetPassword() {
+    if (isLoadingResetPassword()) return;
+
     const email = emailVal().trim().toLowerCase();
+
+    // Validate form
     const formValidity = testFormValidity(email, undefined);
     if (formValidity.email) {
       setEmailFieldError(formValidity.email);
       return;
     }
 
-    navigate(SitePath.resetPasswordHref, { state: { email } });
+    try {
+      setIsLoadingResetPassword(true);
+
+      useRequestResetPassword(email);
+
+      navigate(SitePath.resetPasswordHref, { state: { email } });
+    } catch (e) {
+      showGqlError(e);
+    } finally {
+      setIsLoadingResetPassword(false);
+    }
   }
 
-  function signIn(
+  async function signIn(
     e: Event & {
       submitter: HTMLElement;
     } & {
@@ -35,11 +58,27 @@ export default function SignInScreen() {
   ) {
     e.preventDefault();
 
+    if (isLoadingSignIn()) return;
+
     const [email, password] = [emailVal().trim().toLowerCase(), passwordVal()];
+
+    // Validate form
     const formValidity = testFormValidity(email, password);
     if (formValidity.email) setEmailFieldError(formValidity.email);
     if (formValidity.password) setPasswordFieldError(formValidity.password);
     for (const f of Object.values(formValidity)) if (f) return;
+
+    try {
+      setIsLoadingSignIn(true);
+
+      await useSignIn(email, password);
+
+      navigate(SitePath.appHref, { replace: true });
+    } catch (e) {
+      showGqlError(e);
+    } finally {
+      setIsLoadingSignIn(false);
+    }
   }
 
   function changeEmail(email: string) {
@@ -62,11 +101,11 @@ export default function SignInScreen() {
             <span class="block text-center">Sign in</span>
           </div>
           <div class="w-fit mx-auto mt-2">
-            <span class="block text-center">Welcome back!</span>
+            <span class="block text-center opacity-80">Welcome back!</span>
           </div>
         </div>
 
-        <form class="mt-8" onsubmit={signIn}>
+        <Form class="mt-8" onsubmit={signIn}>
           <div class="space-y-3">
             <div>
               <InputText
@@ -92,21 +131,28 @@ export default function SignInScreen() {
               />
               <button
                 type="button"
-                onclick={resetPassword}
-                class="text-sky-600 hover:underline text-sm"
+                onclick={!isLoadingResetPassword() ? resetPassword : undefined}
+                class="mt-0.5 flex items-center gap-x-2 text-sky-600 hover:underline text-sm"
               >
-                Forgot your password?
+                <span>Forgot your password?</span>
+                <Show when={isLoadingResetPassword()}>
+                  <span>
+                    <LoadingSpinner size="4" />
+                  </span>
+                </Show>
               </button>
             </div>
           </div>
           <div class="mt-4">
-            <ConfirmButton type="submit">Sign in</ConfirmButton>
+            <ConfirmButton type="submit" isLoading={isLoadingSignIn()}>
+              Sign in
+            </ConfirmButton>
           </div>
           <div class="mt-2 text-sm">
             <span>Don't have an account? </span>
             <Link href={SitePath.signupHref}>Sign up</Link>
           </div>
-        </form>
+        </Form>
       </div>
     </>
   );
@@ -115,7 +161,7 @@ export default function SignInScreen() {
 function testFormValidity(email?: string, password?: string) {
   const emailValidity = (() => {
     if (email) {
-      const emailRegExp = /\S+@\S+\.\S+/;
+      const emailRegExp = /^[\w-\.]+@([\w-]+\.)+[\w-]*/;
       if (!emailRegExp.test(email)) {
         return "Email is not valid";
       }
