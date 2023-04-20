@@ -14,7 +14,9 @@ export default function AuthWrapper() {
       if (!isTokenValid) {
         return;
       }
-    } catch {}
+    } catch {
+      return;
+    }
 
     navigate(SitePath.appHref, { replace: true });
   });

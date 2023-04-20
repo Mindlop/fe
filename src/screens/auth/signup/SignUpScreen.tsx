@@ -200,11 +200,13 @@ function testFormValidity(
   })();
   const usernameValidity = (() => {
     if (username) {
-      const regExp = /([A-Za-z0-9_]+)/;
-      if (!regExp.test(username)) {
-        return "Username can only contain letters, numbers, and underscore";
-      } else if (username.length <= 4) {
+      const usernameRegExp = /^[A-Za-z0-9_]*$/;
+      if (username.length <= 4) {
         return "Username must be longer than 4 characters";
+      } else if (username.length >= 15) {
+        return "Username must be less than 15 characters";
+      } else if (!usernameRegExp.test(username)) {
+        return "Username can only contain letters, numbers, and underscore";
       }
     } else {
       return "Username is required";
@@ -212,8 +214,8 @@ function testFormValidity(
   })();
   const emailValidity = (() => {
     if (email) {
-      const regExp = /^[\w-\.]+@([\w-]+\.)+[\w-]*/;
-      if (!regExp.test(email)) {
+      const emailRegExp = /^[\w-\.]+@([\w-]+\.)+[\w-]*/;
+      if (!emailRegExp.test(email)) {
         return "Email is not valid";
       }
     } else {

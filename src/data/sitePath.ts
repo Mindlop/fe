@@ -13,6 +13,9 @@ export default class SitePath {
 
   static app = "/app";
   static circles = "/circles";
+  static createPost = "/create";
+  static messages = "/messages";
+  static notifications = "/notifications";
   // End of simple
 
   // Start of full
@@ -29,5 +32,8 @@ export default class SitePath {
 
   static appHref = `${this._base}${this.app}`;
   static circlesHref = `${this.appHref}${this.circles}`;
+  static createPostHref = `${this.appHref}${this.createPost}`;
+  static messagesHref = `${this.appHref}${this.messages}`;
+  static notificationsHref = `${this.appHref}${this.notifications}`;
   // End of full
 }

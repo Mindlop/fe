@@ -21,18 +21,26 @@ export default function useAuth() {
       variables: {
         email,
         password,
-        clientId: localStorage.getItem("clientId"),
+        clientId: readCookie("clientId"),
       },
     });
 
     if (!res.data) throw res.errors;
 
+    deleteCookie("token");
     saveCookie({
       key: "token",
       value: res.data.signin.token,
       expires: new Date(res.data.signin.exp * 1000).toUTCString(),
     });
-    localStorage.setItem("clientId", res.data.signin.clientId);
+    deleteCookie("clientId");
+    saveCookie({
+      key: "clientId",
+      value: res.data.signin.clientId,
+      expires: new Date(
+        res.data.signin.exp * 1000 + 15 * 24 * 60 * 60 * 1000
+      ).toUTCString(),
+    });
   }
 
   async function requestResetPassword(email: string) {

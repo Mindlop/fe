@@ -41,7 +41,7 @@ export default function InputText(props: Props) {
       <div
         class="py-1.5 px-2 flex items-center border rounded-md"
         classList={{
-          "focus-within:border-sky-400": !props.error,
+          "focus-within:border-sky-400 border-gray-300": !props.error,
           "border-red-500": !!props.error,
         }}
       >

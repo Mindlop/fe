@@ -1,6 +1,6 @@
-import CalendarMonth from "../icon/CalendarMonth";
 import InputText from "./InputText";
 import style from "./InputDate.module.css";
+import IconCalendar from "../icon/IconCalendar";
 
 interface Props {
   labelText?: string;
@@ -36,7 +36,7 @@ export default function InputDate(props: Props) {
           onclick={() => inputRef?.showPicker()}
           class="flex"
         >
-          <CalendarMonth />
+          <IconCalendar class="h-5 w-5 text-gray-600" />
         </button>
       }
       inputClass={style.input}

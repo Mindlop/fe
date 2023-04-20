@@ -4,7 +4,7 @@ export default function AppCirclesScreen() {
   return (
     <>
       <Head title="Circles" />
-      <div>Circles</div>
+      <div>AppCirclesScreen</div>
     </>
   );
 }

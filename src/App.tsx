@@ -89,6 +89,24 @@ const routes: RouteDefinition[] = [
               () => import("./screens/app/circles/AppCirclesScreen")
             ),
           },
+          {
+            path: SitePath.createPost,
+            component: lazy(
+              () => import("./screens/app/createPost/AppCreatePostScreen")
+            ),
+          },
+          {
+            path: SitePath.notifications,
+            component: lazy(
+              () => import("./screens/app/notifications/AppNotificationsScreen")
+            ),
+          },
+          {
+            path: SitePath.messages,
+            component: lazy(
+              () => import("./screens/app/messages/AppMessagesScreen")
+            ),
+          },
         ],
       },
       {

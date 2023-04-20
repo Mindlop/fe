@@ -1,7 +1,7 @@
 import { createSignal, Show } from "solid-js";
-import IconVisibility from "../icon/Visibility";
-import IconVisibilityOff from "../icon/VisibilityOff";
 import InputText from "./InputText";
+import IconEyeOff from "../icon/IconEyeOffOutline";
+import IconEye from "../icon/IconEye";
 
 interface Props {
   labelText?: string;
@@ -36,8 +36,11 @@ export default function InputPassword(props: Props) {
           onclick={() => setIsPasswordShown((prev) => !prev)}
           class="flex"
         >
-          <Show when={isPasswordShown()} fallback={<IconVisibilityOff />}>
-            <IconVisibility />
+          <Show
+            when={isPasswordShown()}
+            fallback={<IconEyeOff class="h-5 w-5 text-gray-600" />}
+          >
+            <IconEye class="h-5 w-5 text-gray-600" />
           </Show>
         </button>
       }
