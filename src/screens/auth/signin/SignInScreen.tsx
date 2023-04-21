@@ -1,7 +1,6 @@
 import { useNavigate } from "@solidjs/router";
 import { createSignal, Show } from "solid-js";
-import ConfirmButton from "../../../components/button/ConfirmButton";
-import Form from "../../../components/form/Form";
+import PrimaryButton from "../../../components/button/PrimaryButton";
 import InputPassword from "../../../components/form/InputPassword";
 import InputText from "../../../components/form/InputText";
 import Head from "../../../components/head/Head";
@@ -49,10 +48,8 @@ export default function SignInScreen() {
   }
 
   async function signIn(
-    e: Event & {
-      submitter: HTMLElement;
-    } & {
-      currentTarget: HTMLFormElement;
+    e: MouseEvent & {
+      currentTarget: HTMLDivElement;
       target: Element;
     }
   ) {
@@ -105,7 +102,7 @@ export default function SignInScreen() {
           </div>
         </div>
 
-        <Form class="mt-8" onsubmit={signIn}>
+        <div role="form" class="mt-8">
           <div class="space-y-3">
             <div>
               <InputText
@@ -129,8 +126,8 @@ export default function SignInScreen() {
                 inputRequired
                 error={passwordFieldError()}
               />
-              <button
-                type="button"
+              <div
+                role="button"
                 onclick={!isLoadingResetPassword() ? resetPassword : undefined}
                 class="mt-0.5 flex items-center gap-x-2 text-sky-600 hover:underline text-sm"
               >
@@ -140,19 +137,23 @@ export default function SignInScreen() {
                     <LoadingSpinner size="4" />
                   </span>
                 </Show>
-              </button>
+              </div>
             </div>
           </div>
           <div class="mt-4">
-            <ConfirmButton type="submit" isLoading={isLoadingSignIn()}>
+            <PrimaryButton
+              onclick={signIn}
+              isLoading={isLoadingSignIn()}
+              class="py-2 px-2"
+            >
               Sign in
-            </ConfirmButton>
+            </PrimaryButton>
           </div>
           <div class="mt-2 text-sm">
             <span>Don't have an account? </span>
             <Link href={SitePath.signupHref}>Sign up</Link>
           </div>
-        </Form>
+        </div>
       </div>
     </>
   );

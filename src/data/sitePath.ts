@@ -19,21 +19,21 @@ export default class SitePath {
   // End of simple
 
   // Start of full
-  static base = `${this._base}/`;
+  static base = `${SitePath._base}/`;
 
-  static authHref = `${this._base}${this.auth}`;
-  static signinHref = `${this.authHref}${this.signin}`;
-  static signupHref = `${this.authHref}${this.signup}`;
-  static verifySignupHref = `${this.signupHref}${this.verifySignup}`;
-  static signupSuccessHref = `${this.signupHref}${this.signupSuccess}`;
-  static resetPasswordHref = `${this.authHref}${this.resetPassword}`;
-  static newPasswordHref = `${this.resetPasswordHref}${this.newPassword}`;
-  static resetPasswordSuccessHref = `${this.resetPasswordHref}${this.resetPasswordSuccess}`;
+  static authHref = `${SitePath._base}${SitePath.auth}`;
+  static signinHref = `${SitePath.authHref}${SitePath.signin}`;
+  static signupHref = `${SitePath.authHref}${SitePath.signup}`;
+  static verifySignupHref = `${SitePath.signupHref}${SitePath.verifySignup}`;
+  static signupSuccessHref = `${SitePath.signupHref}${SitePath.signupSuccess}`;
+  static resetPasswordHref = `${SitePath.authHref}${SitePath.resetPassword}`;
+  static newPasswordHref = `${SitePath.resetPasswordHref}${SitePath.newPassword}`;
+  static resetPasswordSuccessHref = `${SitePath.resetPasswordHref}${SitePath.resetPasswordSuccess}`;
 
-  static appHref = `${this._base}${this.app}`;
-  static circlesHref = `${this.appHref}${this.circles}`;
-  static createPostHref = `${this.appHref}${this.createPost}`;
-  static messagesHref = `${this.appHref}${this.messages}`;
-  static notificationsHref = `${this.appHref}${this.notifications}`;
+  static appHref = `${SitePath._base}${SitePath.app}`;
+  static circlesHref = `${SitePath.appHref}${SitePath.circles}`;
+  static createPostHref = `${SitePath.appHref}${SitePath.createPost}`;
+  static messagesHref = `${SitePath.appHref}${SitePath.messages}`;
+  static notificationsHref = `${SitePath.appHref}${SitePath.notifications}`;
   // End of full
 }

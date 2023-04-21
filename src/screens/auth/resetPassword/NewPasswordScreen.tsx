@@ -1,7 +1,6 @@
 import { useLocation, useNavigate } from "@solidjs/router";
 import { createRenderEffect, createSignal } from "solid-js";
-import ConfirmButton from "../../../components/button/ConfirmButton";
-import Form from "../../../components/form/Form";
+import PrimaryButton from "../../../components/button/PrimaryButton";
 import InputPassword from "../../../components/form/InputPassword";
 import Head from "../../../components/head/Head";
 import SiteInfo from "../../../data/siteInfo";
@@ -29,10 +28,8 @@ export default function NewPasswordScreen() {
   });
 
   async function changePassword(
-    e: Event & {
-      submitter: HTMLElement;
-    } & {
-      currentTarget: HTMLFormElement;
+    e: MouseEvent & {
+      currentTarget: HTMLDivElement;
       target: Element;
     }
   ) {
@@ -97,7 +94,7 @@ export default function NewPasswordScreen() {
           </span>
         </div>
 
-        <Form class="mt-8" onsubmit={changePassword}>
+        <div role="form" class="mt-8">
           <div class="space-y-3">
             <div>
               <InputPassword
@@ -125,11 +122,15 @@ export default function NewPasswordScreen() {
             </div>
           </div>
           <div class="mt-4">
-            <ConfirmButton type="submit" isLoading={isLoadingResetPassword()}>
+            <PrimaryButton
+              onclick={changePassword}
+              isLoading={isLoadingResetPassword()}
+              class="py-2 px-2"
+            >
               Change password
-            </ConfirmButton>
+            </PrimaryButton>
           </div>
-        </Form>
+        </div>
       </div>
     </>
   );

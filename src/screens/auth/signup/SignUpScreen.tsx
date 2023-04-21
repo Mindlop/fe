@@ -1,7 +1,6 @@
 import { useNavigate } from "@solidjs/router";
 import { createSignal } from "solid-js";
-import ConfirmButton from "../../../components/button/ConfirmButton";
-import Form from "../../../components/form/Form";
+import PrimaryButton from "../../../components/button/PrimaryButton";
 import InputDate from "../../../components/form/InputDate";
 import InputPassword from "../../../components/form/InputPassword";
 import InputText from "../../../components/form/InputText";
@@ -28,10 +27,8 @@ export default function SignUpScreen() {
   const [isLoadingSignUp, setIsLoadingSignUp] = createSignal(false);
 
   async function signUp(
-    e: Event & {
-      submitter: HTMLElement;
-    } & {
-      currentTarget: HTMLFormElement;
+    e: MouseEvent & {
+      currentTarget: HTMLDivElement;
       target: Element;
     }
   ) {
@@ -110,7 +107,7 @@ export default function SignUpScreen() {
           <span class="block text-center">Create an account</span>
         </div>
 
-        <Form class="mt-8" onsubmit={signUp}>
+        <div role="form" class="mt-8">
           <div class="space-y-3">
             <div>
               <InputText
@@ -172,15 +169,19 @@ export default function SignUpScreen() {
             </div>
           </div>
           <div class="mt-4">
-            <ConfirmButton type="submit" isLoading={isLoadingSignUp()}>
+            <PrimaryButton
+              onclick={signUp}
+              isLoading={isLoadingSignUp()}
+              class="py-2 px-2"
+            >
               Sign up
-            </ConfirmButton>
+            </PrimaryButton>
           </div>
           <div class="mt-2 text-sm">
             <span>Already have an account? </span>
             <Link href={SitePath.signinHref}>Sign in</Link>
           </div>
-        </Form>
+        </div>
       </div>
     </>
   );

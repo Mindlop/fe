@@ -1,7 +1,6 @@
 import { useLocation, useNavigate } from "@solidjs/router";
 import { createRenderEffect, createSignal } from "solid-js";
-import ConfirmButton from "../../../components/button/ConfirmButton";
-import Form from "../../../components/form/Form";
+import PrimaryButton from "../../../components/button/PrimaryButton";
 import InputText from "../../../components/form/InputText";
 import Head from "../../../components/head/Head";
 import SitePath from "../../../data/sitePath";
@@ -25,10 +24,8 @@ export default function ResetPasswordScreen() {
   });
 
   async function verifyCode(
-    e: Event & {
-      submitter: HTMLElement;
-    } & {
-      currentTarget: HTMLFormElement;
+    e: MouseEvent & {
+      currentTarget: HTMLDivElement;
       target: Element;
     }
   ) {
@@ -80,7 +77,7 @@ export default function ResetPasswordScreen() {
           </span>
         </div>
 
-        <Form class="mt-8" onsubmit={verifyCode}>
+        <div role="form" class="mt-8">
           <div>
             <InputText
               labelText="VERIFICATION CODE"
@@ -94,11 +91,15 @@ export default function ResetPasswordScreen() {
             />
           </div>
           <div class="mt-4">
-            <ConfirmButton type="submit" isLoading={isLoadingResetPassword()}>
+            <PrimaryButton
+              onclick={verifyCode}
+              isLoading={isLoadingResetPassword()}
+              class="py-2 px-2"
+            >
               Verify
-            </ConfirmButton>
+            </PrimaryButton>
           </div>
-        </Form>
+        </div>
       </div>
     </>
   );

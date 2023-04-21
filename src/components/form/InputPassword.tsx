@@ -31,18 +31,14 @@ export default function InputPassword(props: Props) {
       inputOnInput={props.inputOnInput}
       inputRequired={props.inputRequired}
       inputSuffix={
-        <button
-          type="button"
-          onclick={() => setIsPasswordShown((prev) => !prev)}
-          class="flex"
-        >
+        <div role="button" onclick={() => setIsPasswordShown((prev) => !prev)}>
           <Show
             when={isPasswordShown()}
             fallback={<IconEyeOff class="h-5 w-5 text-gray-600" />}
           >
             <IconEye class="h-5 w-5 text-gray-600" />
           </Show>
-        </button>
+        </div>
       }
       error={props.error}
     />

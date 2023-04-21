@@ -31,13 +31,9 @@ export default function InputDate(props: Props) {
       inputOnInput={props.inputOnInput}
       inputRequired={props.inputRequired}
       inputSuffix={
-        <button
-          type="button"
-          onclick={() => inputRef?.showPicker()}
-          class="flex"
-        >
+        <div role="button" onclick={() => inputRef?.showPicker()}>
           <IconCalendar class="h-5 w-5 text-gray-600" />
-        </button>
+        </div>
       }
       inputClass={style.input}
       error={props.error}

@@ -2,10 +2,9 @@ import { JSXElement, Show } from "solid-js";
 import LoadingSpinner from "../loading/LoadingSpinner";
 
 interface Props {
-  type?: "submit" | "reset" | "button";
   onclick?: (
     e: MouseEvent & {
-      currentTarget: HTMLButtonElement;
+      currentTarget: HTMLDivElement;
       target: Element;
     }
   ) => void;
@@ -14,12 +13,12 @@ interface Props {
   isLoading?: boolean;
 }
 
-export default function ConfirmButton(props: Props) {
+export default function Primary(props: Props) {
   return (
-    <button
-      type={props.type}
+    <div
+      role="button"
       onclick={!props.isLoading ? props.onclick : undefined}
-      class={`w-full p-2 bg-sky-400 hover:bg-sky-500 active:bg-sky-600 text-white rounded-md${
+      class={`w-full py-1 px-3 text-center bg-sky-400 hover:bg-sky-500 active:bg-sky-600 text-white rounded-md${
         props.class ? ` ${props.class}` : ""
       }`}
     >
@@ -33,6 +32,6 @@ export default function ConfirmButton(props: Props) {
       >
         {props.children}
       </Show>
-    </button>
+    </div>
   );
 }

@@ -1,17 +1,29 @@
 import { ApolloError, gql } from "@apollo/client/core";
 import { deleteCookie, readCookie, saveCookie } from "../utils/cookie";
 import useGqlClient from "./useGqlClient";
+import useUser from "./useUser";
 
 export default function useAuth() {
-  const gqlClient = useGqlClient();
+  const [gqlClient, gqlClientUpdate] = useGqlClient();
+  const user = useUser();
 
   async function signIn(email: string, password: string) {
     const res = await gqlClient().mutate<{
       signin: { token: string; exp: number; clientId: string };
     }>({
       mutation: gql`
-        mutation SignIn($email: String!, $password: String!, $clientId: UUID) {
-          signin(email: $email, password: $password, clientId: $clientId) {
+        mutation SignIn(
+          $email: String!
+          $password: String!
+          $clientId: UUID
+          $clientInfo: String
+        ) {
+          signin(
+            email: $email
+            password: $password
+            clientId: $clientId
+            clientInfo: $clientInfo
+          ) {
             token
             exp
             clientId
@@ -22,6 +34,7 @@ export default function useAuth() {
         email,
         password,
         clientId: readCookie("clientId"),
+        clientInfo: navigator.userAgent,
       },
     });
 
@@ -41,6 +54,9 @@ export default function useAuth() {
         res.data.signin.exp * 1000 + 15 * 24 * 60 * 60 * 1000
       ).toUTCString(),
     });
+
+    gqlClientUpdate();
+    await user.update();
   }
 
   async function requestResetPassword(email: string) {
@@ -87,6 +103,8 @@ export default function useAuth() {
 
   function signOut() {
     deleteCookie("token");
+    gqlClientUpdate();
+    user.reset();
     window.location.reload();
   }
 
@@ -186,30 +204,46 @@ export default function useAuth() {
     }
 
     try {
-      const res = await gqlClient().query<{
-        validateToken: { success: boolean };
+      const res = await gqlClient().mutate<{
+        validateToken: { token: string; clientId: string; exp: number };
       }>({
-        query: gql`
-          query ValidateToken {
+        mutation: gql`
+          mutation ValidateToken {
             validateToken {
-              success
+              token
+              clientId
+              exp
             }
           }
         `,
-        fetchPolicy: "no-cache",
       });
 
-      if (res.data.validateToken.success) {
-        return true;
-      }
+      if (!res.data) throw res.errors;
+
+      deleteCookie("token");
+      saveCookie({
+        key: "token",
+        value: res.data.validateToken.token,
+        expires: new Date(res.data.validateToken.exp * 1000).toUTCString(),
+      });
+      deleteCookie("clientId");
+      saveCookie({
+        key: "clientId",
+        value: res.data.validateToken.clientId,
+        expires: new Date(
+          res.data.validateToken.exp * 1000 + 15 * 24 * 60 * 60 * 1000
+        ).toUTCString(),
+      });
+
+      gqlClientUpdate();
+      await user.update();
+      return true;
     } catch (e) {
       if (!(e instanceof ApolloError && e.networkError)) {
         signOut();
       }
       throw e;
     }
-
-    return false;
   }
 
   return {
