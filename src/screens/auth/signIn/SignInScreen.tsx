@@ -151,7 +151,7 @@ export default function SignInScreen() {
           </div>
           <div class="mt-2 text-sm">
             <span>Don't have an account? </span>
-            <Link href={SitePath.signupHref}>Sign up</Link>
+            <Link href={SitePath.signUpHref}>Sign up</Link>
           </div>
         </div>
       </div>

@@ -5,6 +5,7 @@
   "scripts": {
     "start": "vite",
     "dev": "vite",
+    "dev-host": "vite --host",
     "build": "vite build",
     "serve": "vite preview"
   },
@@ -20,8 +21,10 @@
   },
   "dependencies": {
     "@apollo/client": "^3.7.12",
+    "@solid-primitives/resize-observer": "^2.0.15",
     "@solidjs/meta": "^0.28.4",
     "@solidjs/router": "^0.8.2",
+    "animal-avatar-generator": "^1.1.0",
     "graphql": "^16.6.0",
     "solid-js": "^1.6.10",
     "solid-toast": "^0.5.0"

@@ -1,14 +1,14 @@
 import { JSXElement, createRenderEffect, createSignal } from "solid-js";
-import useBottomSheet from "../../hooks/useBottomSheet";
+import useOverlay from "../../hooks/useOverlay";
 
-export default function BottomSheet() {
-  const bottomSheet = useBottomSheet();
+export default function Overlay() {
+  const overlay = useOverlay();
   const [currentBS, setCurrentBS] = createSignal<JSXElement>();
 
   createRenderEffect(() => {
-    let bs = bottomSheet.get();
-    if (bs) {
-      setCurrentBS(<bs.component {...bs.props} />);
+    let ov = overlay.get();
+    if (ov) {
+      setCurrentBS(<ov.component {...ov.props} />);
     } else {
       setCurrentBS();
     }

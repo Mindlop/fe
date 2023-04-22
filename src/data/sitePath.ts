@@ -3,10 +3,10 @@ export default class SitePath {
 
   // Start of simple
   static auth = "/auth";
-  static signin = "/signin";
-  static signup = "/signup";
-  static verifySignup = "/verify";
-  static signupSuccess = "/success";
+  static signIn = "/signIn";
+  static signUp = "/signUp";
+  static verifySignUp = "/verify";
+  static signUpSuccess = "/success";
   static resetPassword = "/reset-password";
   static newPassword = "/new";
   static resetPasswordSuccess = "/success";
@@ -22,10 +22,10 @@ export default class SitePath {
   static base = `${SitePath._base}/`;
 
   static authHref = `${SitePath._base}${SitePath.auth}`;
-  static signinHref = `${SitePath.authHref}${SitePath.signin}`;
-  static signupHref = `${SitePath.authHref}${SitePath.signup}`;
-  static verifySignupHref = `${SitePath.signupHref}${SitePath.verifySignup}`;
-  static signupSuccessHref = `${SitePath.signupHref}${SitePath.signupSuccess}`;
+  static signInHref = `${SitePath.authHref}${SitePath.signIn}`;
+  static signUpHref = `${SitePath.authHref}${SitePath.signUp}`;
+  static verifySignUpHref = `${SitePath.signUpHref}${SitePath.verifySignUp}`;
+  static signUpSuccessHref = `${SitePath.signUpHref}${SitePath.signUpSuccess}`;
   static resetPasswordHref = `${SitePath.authHref}${SitePath.resetPassword}`;
   static newPasswordHref = `${SitePath.resetPasswordHref}${SitePath.newPassword}`;
   static resetPasswordSuccessHref = `${SitePath.resetPasswordHref}${SitePath.resetPasswordSuccess}`;

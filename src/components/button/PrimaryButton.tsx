@@ -11,16 +11,21 @@ interface Props {
   class?: string;
   children: JSXElement;
   isLoading?: boolean;
+  isDisable?: boolean;
 }
 
 export default function Primary(props: Props) {
   return (
     <div
       role="button"
-      onclick={!props.isLoading ? props.onclick : undefined}
-      class={`w-full py-1 px-3 text-center bg-sky-400 hover:bg-sky-500 active:bg-sky-600 text-white rounded-md${
+      onclick={!props.isDisable && !props.isLoading ? props.onclick : undefined}
+      class={`w-full py-1 px-3 text-center text-white rounded-md${
         props.class ? ` ${props.class}` : ""
       }`}
+      classList={{
+        "bg-sky-400 hover:bg-sky-500 active:bg-sky-600": !props.isDisable,
+        "bg-gray-300": props.isDisable,
+      }}
     >
       <Show
         when={!props.isLoading}

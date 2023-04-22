@@ -9,13 +9,13 @@ export default function SuccessSignUpScreen() {
 
   createRenderEffect(() => {
     if (!location.state?.name) {
-      navigate(SitePath.signupHref, { replace: true });
+      navigate(SitePath.signUpHref, { replace: true });
     }
   });
 
   onMount(() => {
     const timeout = setTimeout(
-      () => navigate(SitePath.signinHref, { replace: true }),
+      () => navigate(SitePath.signInHref, { replace: true }),
       4000
     );
 

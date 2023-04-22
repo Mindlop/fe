@@ -8,8 +8,8 @@ export default function HomeScreen() {
       <Head />
       <div>HomeScreen</div>
       <Link href={SitePath.appHref}>App</Link>
-      <Link href={SitePath.signinHref}>Sign in</Link>
-      <Link href={SitePath.signupHref}>Sign up</Link>
+      <Link href={SitePath.signInHref}>Sign in</Link>
+      <Link href={SitePath.signUpHref}>Sign up</Link>
     </>
   );
 }

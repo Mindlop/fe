@@ -65,7 +65,7 @@ export default function SignUpScreen() {
 
       await useSignUp(name, email, username, password, dateOfBirth);
 
-      navigate(SitePath.verifySignupHref, { state: { name, email } });
+      navigate(SitePath.verifySignUpHref, { state: { name, email } });
     } catch (e) {
       showGqlError(e);
     } finally {
@@ -179,7 +179,7 @@ export default function SignUpScreen() {
           </div>
           <div class="mt-2 text-sm">
             <span>Already have an account? </span>
-            <Link href={SitePath.signinHref}>Sign in</Link>
+            <Link href={SitePath.signInHref}>Sign in</Link>
           </div>
         </div>
       </div>

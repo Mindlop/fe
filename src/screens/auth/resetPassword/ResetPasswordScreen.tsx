@@ -19,7 +19,7 @@ export default function ResetPasswordScreen() {
 
   createRenderEffect(() => {
     if (!location.state?.email) {
-      navigate(SitePath.signinHref, { replace: true });
+      navigate(SitePath.signInHref, { replace: true });
     }
   });
 

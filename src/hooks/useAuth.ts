@@ -2,14 +2,16 @@ import { ApolloError, gql } from "@apollo/client/core";
 import { deleteCookie, readCookie, saveCookie } from "../utils/cookie";
 import useGqlClient from "./useGqlClient";
 import useUser from "./useUser";
+import parseJwt from "../utils/parseJwt";
 
 export default function useAuth() {
   const [gqlClient, gqlClientUpdate] = useGqlClient();
   const user = useUser();
 
   async function signIn(email: string, password: string) {
+    const token = readCookie("token");
     const res = await gqlClient().mutate<{
-      signin: { token: string; exp: number; clientId: string };
+      signin: { token: string };
     }>({
       mutation: gql`
         mutation SignIn(
@@ -25,34 +27,26 @@ export default function useAuth() {
             clientInfo: $clientInfo
           ) {
             token
-            exp
-            clientId
           }
         }
       `,
       variables: {
         email,
         password,
-        clientId: readCookie("clientId"),
+        clientId: token ? parseJwt<AuthT>(token).clientId : undefined,
         clientInfo: navigator.userAgent,
       },
     });
 
     if (!res.data) throw res.errors;
 
+    const signInData = parseJwt<AuthT>(res.data.signin.token);
+
     deleteCookie("token");
     saveCookie({
       key: "token",
       value: res.data.signin.token,
-      expires: new Date(res.data.signin.exp * 1000).toUTCString(),
-    });
-    deleteCookie("clientId");
-    saveCookie({
-      key: "clientId",
-      value: res.data.signin.clientId,
-      expires: new Date(
-        res.data.signin.exp * 1000 + 15 * 24 * 60 * 60 * 1000
-      ).toUTCString(),
+      expires: new Date(signInData.exp * 1000).toUTCString(),
     });
 
     gqlClientUpdate();
@@ -180,11 +174,11 @@ export default function useAuth() {
 
   async function verifySignUp(email: string, verifyCode: string) {
     const res = await gqlClient().mutate<{
-      verifySignup: { success: boolean };
+      verifySignUp: { success: boolean };
     }>({
       mutation: gql`
         mutation VerifySignUp($email: String!, $verifyCode: String!) {
-          verifySignup(email: $email, verifyCode: $verifyCode) {
+          verifySignUp(email: $email, verifyCode: $verifyCode) {
             success
           }
         }
@@ -205,14 +199,12 @@ export default function useAuth() {
 
     try {
       const res = await gqlClient().mutate<{
-        validateToken: { token: string; clientId: string; exp: number };
+        validateToken: { token: string };
       }>({
         mutation: gql`
           mutation ValidateToken {
             validateToken {
               token
-              clientId
-              exp
             }
           }
         `,
@@ -220,19 +212,13 @@ export default function useAuth() {
 
       if (!res.data) throw res.errors;
 
+      const signInData = parseJwt<AuthT>(res.data.validateToken.token);
+
       deleteCookie("token");
       saveCookie({
         key: "token",
         value: res.data.validateToken.token,
-        expires: new Date(res.data.validateToken.exp * 1000).toUTCString(),
-      });
-      deleteCookie("clientId");
-      saveCookie({
-        key: "clientId",
-        value: res.data.validateToken.clientId,
-        expires: new Date(
-          res.data.validateToken.exp * 1000 + 15 * 24 * 60 * 60 * 1000
-        ).toUTCString(),
+        expires: new Date(signInData.exp * 1000).toUTCString(),
       });
 
       gqlClientUpdate();

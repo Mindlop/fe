@@ -7,8 +7,8 @@ import IconPeopleCircle from "../../components/icon/IconPeopleCircle";
 import IconAddCircle from "../../components/icon/IconAddCircle";
 import IconChatboxEllipses from "../../components/icon/IconChatboxEllipses";
 import IconNotifications from "../../components/icon/IconNotifications";
-import useBottomSheet from "../../hooks/useBottomSheet";
-import BottomSheet from "../../components/bottomSheet/BottomSheet";
+import useOverlay from "../../hooks/useOverlay";
+import Overlay from "../../components/overlay/Overlay";
 
 enum BottomNavbar {
   Hidden,
@@ -22,7 +22,7 @@ export default function AppWrapper() {
   const location = useLocation();
   const navigate = useNavigate();
   const auth = useAuth();
-  const bottomSheet = useBottomSheet();
+  const overlay = useOverlay();
   const [activeBottomNavbar, setActiveBottomNavbar] =
     createSignal<BottomNavbar>(BottomNavbar.Hidden);
 
@@ -34,7 +34,7 @@ export default function AppWrapper() {
       }
     } catch {}
 
-    navigate(SitePath.signinHref, { replace: true });
+    navigate(SitePath.signInHref, { replace: true });
   });
 
   createRenderEffect(() => {
@@ -138,13 +138,13 @@ export default function AppWrapper() {
       </div>
 
       <div
-        onclick={bottomSheet.remove}
+        onclick={overlay.remove}
         class="fixed top-0 right-0 bottom-0 left-0 min-w-screen min-h-screen bg-black/30"
         classList={{
-          invisible: bottomSheet.count() === 0,
+          invisible: overlay.count() === 0,
         }}
       >
-        <BottomSheet />
+        <Overlay />
       </div>
     </div>
   );

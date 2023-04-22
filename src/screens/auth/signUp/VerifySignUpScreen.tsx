@@ -17,7 +17,7 @@ export default function VerifySignUpScreen() {
 
   createRenderEffect(() => {
     if (!location.state?.name || !location.state?.email) {
-      navigate(SitePath.signupHref, { replace: true });
+      navigate(SitePath.signUpHref, { replace: true });
     }
   });
 
@@ -45,7 +45,7 @@ export default function VerifySignUpScreen() {
 
       await useVerifySignUp(location.state?.email!, code);
 
-      navigate(SitePath.signupSuccessHref, {
+      navigate(SitePath.signUpSuccessHref, {
         state: { name: location.state?.name },
         replace: true,
       });

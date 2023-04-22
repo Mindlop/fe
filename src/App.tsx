@@ -20,28 +20,28 @@ const routes: RouteDefinition[] = [
             component: lazy(() => import("./screens/auth/AuthScreen")),
           },
           {
-            path: SitePath.signin,
-            component: lazy(() => import("./screens/auth/signin/SignInScreen")),
+            path: SitePath.signIn,
+            component: lazy(() => import("./screens/auth/signIn/SignInScreen")),
           },
           {
-            path: SitePath.signup,
+            path: SitePath.signUp,
             children: [
               {
                 path: "/",
                 component: lazy(
-                  () => import("./screens/auth/signup/SignUpScreen")
+                  () => import("./screens/auth/signUp/SignUpScreen")
                 ),
               },
               {
-                path: SitePath.verifySignup,
+                path: SitePath.verifySignUp,
                 component: lazy(
-                  () => import("./screens/auth/signup/VerifySignUpScreen")
+                  () => import("./screens/auth/signUp/VerifySignUpScreen")
                 ),
               },
               {
-                path: SitePath.signupSuccess,
+                path: SitePath.signUpSuccess,
                 component: lazy(
-                  () => import("./screens/auth/signup/SuccessSignUpScreen")
+                  () => import("./screens/auth/signUp/SuccessSignUpScreen")
                 ),
               },
             ],

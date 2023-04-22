@@ -9,7 +9,7 @@ export default function SuccessResetPasswordScreen() {
 
   onMount(() => {
     const timeout = setTimeout(
-      () => navigate(SitePath.signinHref, { replace: true }),
+      () => navigate(SitePath.signInHref, { replace: true }),
       4000
     );
 

@@ -36,6 +36,7 @@ class UserState {
       query: gql`
         query User {
           user {
+            id
             media {
               url
               mimeType

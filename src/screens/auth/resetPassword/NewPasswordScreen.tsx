@@ -23,7 +23,7 @@ export default function NewPasswordScreen() {
 
   createRenderEffect(() => {
     if (!location.state?.email || !location.state.code) {
-      navigate(SitePath.signinHref, { replace: true });
+      navigate(SitePath.signInHref, { replace: true });
     }
   });
 
@@ -59,7 +59,7 @@ export default function NewPasswordScreen() {
         newPassword
       );
 
-      navigate(SitePath.signinHref, { replace: true });
+      navigate(SitePath.signInHref, { replace: true });
     } catch (e) {
       showGqlError(e);
     } finally {
