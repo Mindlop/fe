@@ -7,7 +7,7 @@ import { readCookie } from "../utils/cookie";
 class UserState {
   private static _isInit = false;
   private static _gqlClient: () => ApolloClient<NormalizedCacheObject>;
-  private static _user: Accessor<UserT>;
+  private static _user: Accessor<UserT | undefined>;
   private static _setUser: Setter<UserT>;
   private static _loading: Accessor<boolean>;
   private static _setLoading: Setter<boolean>;
@@ -16,7 +16,7 @@ class UserState {
     if (!UserState._isInit) {
       UserState._isInit = true;
       UserState._gqlClient = useGqlClient()[0];
-      [UserState._user, UserState._setUser] = createSignal<UserT>({} as UserT);
+      [UserState._user, UserState._setUser] = createSignal<UserT>();
       [UserState._loading, UserState._setLoading] = createSignal(false);
       await UserState.update();
     }
@@ -32,28 +32,33 @@ class UserState {
 
     UserState._setLoading(true);
 
-    const res = await UserState._gqlClient().query<{ user: UserT }>({
+    const res = await UserState._gqlClient().query<UserT>({
       query: gql`
-        query User {
-          user {
-            id
+        query UserAuthAccount {
+          userAuth {
+            userId
+            email
+            username
+            passwordChangedAt
+            lastActivityAt
+          }
+          userAccount {
+            userId
+            name
             media {
               url
               mimeType
             }
-            name
-            email
-            username
             dateOfBirth
+            friendsCount
             createdAt
-            passwordChangedAt
           }
         }
       `,
       fetchPolicy: "no-cache",
     });
 
-    UserState._setUser(res.data.user);
+    UserState._setUser(res.data);
 
     UserState._setLoading(false);
   }
@@ -70,20 +75,9 @@ class UserState {
 export default function useUser() {
   UserState.init();
 
-  function mediaType() {
-    const mimeType = UserState.user().media?.mimeType?.toLowerCase();
-    if (mimeType?.startsWith("image")) {
-      return "image";
-    } else if (mimeType?.startsWith("video")) {
-      return "video";
-    } else {
-      return "unknown";
-    }
-  }
   return {
     init: UserState.init,
     user: UserState.user,
-    mediaType,
     isLoading: UserState.isLoading,
     update: UserState.update,
     reset: UserState.reset,

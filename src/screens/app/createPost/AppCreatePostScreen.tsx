@@ -5,7 +5,6 @@ import PrimaryButton from "../../../components/button/PrimaryButton";
 import {
   For,
   JSX,
-  JSXElement,
   Match,
   Setter,
   Show,
@@ -26,10 +25,10 @@ import AnimalAvatar from "../../../components/avatar/AnimalAvatar";
 import toast from "solid-toast";
 import { createResizeObserver } from "@solid-primitives/resize-observer";
 import IconClose from "../../../components/icon/IconClose";
+import mediaType from "../../../utils/mediaType";
 
 enum AudienceType {
-  anyone = "Anyone",
-  friends = "Friends",
+  community = "Community",
   circle = "Circle",
 }
 
@@ -37,11 +36,15 @@ export default function AppCreatePostScreen() {
   const navigate = useNavigate();
   const userData = useUser();
   const overlay = useOverlay();
-  const [audienceType, setAudienceType] = createSignal(AudienceType.anyone);
+  const [audienceType, setAudienceType] = createSignal<AudienceType>();
   const [postCaption, setPostCaption] = createSignal("");
   const [postMedia, setPostMedia] = createSignal<{ file: File; url: string }[]>(
     []
   );
+
+  function getMediaType() {
+    return mediaType(userData.user()?.userAccount.media?.mimeType ?? "");
+  }
 
   function addAudienceTypePickerBottomSheet() {
     overlay.add(AudienceTypePickerBottomSheet, {
@@ -124,11 +127,11 @@ export default function AppCreatePostScreen() {
           <div class="p-2 flex items-center gap-x-2">
             <div>
               <Show
-                when={userData.mediaType() === "image"}
+                when={getMediaType() === "image"}
                 fallback={
-                  <Show when={userData.user().id}>
+                  <Show when={userData.user()?.userAccount.userId}>
                     <AnimalAvatar
-                      seed={userData.user().id}
+                      seed={userData.user()!.userAccount.userId}
                       blackout={false}
                       size={48}
                     />
@@ -136,7 +139,7 @@ export default function AppCreatePostScreen() {
                 }
               >
                 <img
-                  src={userData.user().media?.url}
+                  src={userData.user()!.userAccount.media?.url}
                   alt="User profile"
                   class="h-10 w-10 rounded-full object-cover"
                 />
@@ -144,7 +147,9 @@ export default function AppCreatePostScreen() {
             </div>
             <div>
               <div>
-                <span class="font-semibold">{userData.user().name}</span>
+                <span class="font-semibold">
+                  {userData.user()?.userAccount.name}
+                </span>
               </div>
               <div>
                 <AudienceChipButton
@@ -223,7 +228,7 @@ export default function AppCreatePostScreen() {
 }
 
 interface AudienceChipButtonProps {
-  audienceType: AudienceType;
+  audienceType?: AudienceType;
   onclick: (
     e: MouseEvent & {
       currentTarget: HTMLDivElement;
@@ -238,11 +243,8 @@ function AudienceChipButton(props: AudienceChipButtonProps) {
       onclick={props.onclick}
       prefixComponent={
         <Switch>
-          <Match when={props.audienceType === AudienceType.anyone}>
+          <Match when={props.audienceType === AudienceType.community}>
             <IconEarth class="w-4 h-4" />
-          </Match>
-          <Match when={props.audienceType === AudienceType.friends}>
-            <IconPeople class="w-4 h-4" />
           </Match>
           <Match when={props.audienceType === AudienceType.circle}>
             <IconPeopleCircle class="w-4 h-4" />
@@ -251,7 +253,7 @@ function AudienceChipButton(props: AudienceChipButtonProps) {
       }
       suffixComponent={<IconCaret direction="down" class="w-4 h-4" />}
     >
-      {props.audienceType}
+      {props.audienceType ?? "Choose audience"}
     </ChipButton>
   );
 }
@@ -281,11 +283,7 @@ function AudienceTypePickerBottomSheet(props: AudiencePickerBottomSheetProps) {
       </div>
       <div class="mt-4">
         <AudiencePickerButton
-          audienceType={AudienceType.anyone}
-          selectAudienceType={props.selectAudienceType}
-        />
-        <AudiencePickerButton
-          audienceType={AudienceType.friends}
+          audienceType={AudienceType.community}
           selectAudienceType={props.selectAudienceType}
         />
         <AudiencePickerButton
@@ -317,10 +315,7 @@ function AudienceTypePickerBottomSheet(props: AudiencePickerBottomSheetProps) {
       >
         <div class="p-2 border rounded-lg">
           <Switch>
-            <Match when={props.audienceType === AudienceType.anyone}>
-              <IconEarth class="w-6 h-6" />
-            </Match>
-            <Match when={props.audienceType === AudienceType.friends}>
+            <Match when={props.audienceType === AudienceType.community}>
               <IconPeople class="w-6 h-6" />
             </Match>
             <Match when={props.audienceType === AudienceType.circle}>

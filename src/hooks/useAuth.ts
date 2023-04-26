@@ -8,20 +8,20 @@ export default function useAuth() {
   const [gqlClient, gqlClientUpdate] = useGqlClient();
   const user = useUser();
 
-  async function signIn(email: string, password: string) {
+  async function signIn(emailOrUsername: string, password: string) {
     const token = readCookie("token");
     const res = await gqlClient().mutate<{
       signin: { token: string };
     }>({
       mutation: gql`
         mutation SignIn(
-          $email: String!
+          $emailOrUsername: String!
           $password: String!
           $clientId: UUID
           $clientInfo: String
         ) {
           signin(
-            email: $email
+            emailOrUsername: $emailOrUsername
             password: $password
             clientId: $clientId
             clientInfo: $clientInfo
@@ -31,7 +31,7 @@ export default function useAuth() {
         }
       `,
       variables: {
-        email,
+        emailOrUsername,
         password,
         clientId: token ? parseJwt<AuthT>(token).clientId : undefined,
         clientInfo: navigator.userAgent,
@@ -178,7 +178,7 @@ export default function useAuth() {
     }>({
       mutation: gql`
         mutation VerifySignUp($email: String!, $verifyCode: String!) {
-          verifySignUp(email: $email, verifyCode: $verifyCode) {
+          verifySignup(email: $email, verifyCode: $verifyCode) {
             success
           }
         }
